@@ -8,5 +8,4 @@ spring:
         git:
           uri: https://github.com/Yassinean/BankApp-MicroService.git
           search-paths:
-              - centralized-config
-          clone-on-start: true
+            - centralized-config
