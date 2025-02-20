@@ -1,6 +1,7 @@
 package com.BankApp.customer_service.service.impl;
 
-import com.BankApp.customer_service.dto.CustomerDto;
+import com.BankApp.customer_service.dto.CustomerDtoRequest;
+import com.BankApp.customer_service.dto.CustomerDtoResponse;
 import com.BankApp.customer_service.entity.Customer;
 import com.BankApp.customer_service.exception.CustomerNotFoundException;
 import com.BankApp.customer_service.exception.EmailCustomerNotFoundException;
@@ -27,27 +28,30 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerDto saveCustomer(CustomerDto customerDto) {
+    public CustomerDtoResponse saveCustomer(CustomerDtoRequest customerDto) {
         Customer customer = mapper.toCustomer(customerDto);
-        return mapper.toCustomerDTO(repository.save(customer));
+        customer.setName(customerDto.getName());
+        customer.setEmail(customerDto.getEmail());
+        Customer savedCustomer = repository.save(customer);
+        return mapper.toResponseDto(savedCustomer);
     }
 
     @Override
-    public List<CustomerDto> getAllCustomers() {
+    public List<CustomerDtoResponse> getAllCustomers() {
         return mapper.toCustomerDTOs(repository.findAll());
     }
 
     @Override
-    public CustomerDto getCustomerById(Long id) {
+    public CustomerDtoResponse getCustomerById(Long id) {
         return repository.findById(id)
-                .map(mapper::toCustomerDTO)
+                .map(mapper::toResponseDto)
                 .orElseThrow(() -> new CustomerNotFoundException(id));
     }
 
     @Override
-    public CustomerDto getCustomerByEmail(String email) {
+    public CustomerDtoResponse getCustomerByEmail(String email) {
         return repository.findByEmail(email)
-                .map(mapper::toCustomerDTO)
+                .map(mapper::toResponseDto)
                 .orElseThrow(() -> new EmailCustomerNotFoundException("Customer with email " + email + " not found"));
     }
 }
