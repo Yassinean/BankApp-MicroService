@@ -66,7 +66,7 @@ public class AccountServiceImpl implements AccountService {
 
 
     public boolean clientExists(Long clientId) {
-        String url = "http://localhost:8080/CUSTOMER-SERVICE/customers/" + clientId;
+        String url = "http://localhost:8080/customer-service/customers/" + clientId;
         try {
             ResponseEntity<Void> response = restTemplate.exchange(
                     url, HttpMethod.GET,null,Void.class
@@ -77,10 +77,10 @@ public class AccountServiceImpl implements AccountService {
             return false;
         } catch (HttpClientErrorException e) {
             log.error("HTTP error while checking client existence: {}", e.getMessage());
-            throw new ClientServiceException("Erreur lors de la vérification du client: " + e.getMessage());
+            throw new ClientServiceException(clientId);
         } catch (Exception e) {
             log.error("Unexpected error while checking if client exists", e);
-            throw new ClientServiceException("Erreur interne lors de la vérification du client.");
+            throw new ClientServiceException(clientId);
         }
     }
 
