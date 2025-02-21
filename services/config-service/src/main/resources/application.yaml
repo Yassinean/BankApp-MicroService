@@ -6,6 +6,6 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/Yassinean/BankApp-MicroService.git
+          uri: https://github.com/Yassinean/BankApp-Config.git
           search-paths:
-            - centralized-config
+            - BankApp-Config
