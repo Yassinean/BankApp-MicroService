@@ -9,6 +9,8 @@ import com.BankApp.customer_service.mapper.CustomerMapper;
 import com.BankApp.customer_service.repository.CustomerRepository;
 import com.BankApp.customer_service.service.CustomerService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,7 @@ import java.util.List;
 @Transactional
 public class CustomerServiceImpl implements CustomerService {
 
+    private static final Logger log = LoggerFactory.getLogger(CustomerServiceImpl.class);
     private final CustomerRepository repository;
     private final CustomerMapper mapper;
 
@@ -31,8 +34,11 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDtoResponse saveCustomer(CustomerDtoRequest customerDto) {
         Customer customer = mapper.toCustomer(customerDto);
         customer.setName(customerDto.getName());
-        customer.setEmail(customerDto.getEmail());
+        if(repository.findByEmail(customer.getEmail()).isPresent()){
+            customer.setEmail(customerDto.getEmail());
+        }
         Customer savedCustomer = repository.save(customer);
+        log.info("customer ::" + savedCustomer);
         return mapper.toResponseDto(savedCustomer);
     }
 
@@ -45,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerDtoResponse getCustomerById(Long id) {
         return repository.findById(id)
                 .map(mapper::toResponseDto)
-                .orElseThrow(() -> new CustomerNotFoundException(id));
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
     }
 
     @Override
